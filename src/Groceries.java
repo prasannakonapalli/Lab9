@@ -4,6 +4,8 @@ public class Groceries {
 	private static Map<String,Double> items =new TreeMap<>();
 	private static List<String>orderNames = new ArrayList<>();
 	private static List<Double>orderPrices = new ArrayList<>();
+	private static List<Integer>orderItemQty = new ArrayList<>();
+
 	
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Guenther's Market!");
@@ -40,8 +42,13 @@ public class Groceries {
 				
 				displayOrderItems();
 				System.out.println("Average price per item in order was "+findAverage(orderPrices));
-				System.out.println("Highest index of cost item : "+findMax(orderPrices));
-				System.out.println("Lowest index of cost item : "+findMin(orderPrices));
+				int maxIdx=findMax(orderPrices);
+				System.out.println("Highest index of cost item : "+maxIdx);
+				int minIdx=findMin(orderPrices);
+				System.out.println("Lowest index of cost item : "+minIdx);
+				System.out.println("Most expensive item ordered : "+orderNames.get(maxIdx));
+				System.out.println("Least expensive item ordered : "+orderNames.get(minIdx));
+
 				
 				
 				System.exit(0);
@@ -74,16 +81,64 @@ private static void addOrderItem(String itemName) {
 	Double itemPrice= items.get(itemName);
 	 System.out.println("Adding "+itemName+" to cart at $"+itemPrice);	 
 	 orderNames.add(itemName);
-	 orderPrices.add(itemPrice);	 
+	 orderPrices.add(itemPrice);
+	 addOrderQty(itemName);
+	 
+}
+
+private static void addOrderQty(String itemName) {
+	
+	/*
+	for(String orderItemName:orderNames)
+	{
+		
+	 Double itemPrice=	items.get(orderItemName); 
+	 System.out.printf("%-20s%20.2f%s%n",orderItemName,itemPrice,"$");
+	}*/
+	int itemIdx= orderNames.indexOf(itemName); 
+	int count=Collections.frequency(orderNames, itemName); 
+	
+	//System.out.println(itemIdx);
+	//System.out.println(count);
+	//System.out.println(orderItemQty);
+	
+	try {
+		orderItemQty.get(itemIdx);
+		 orderItemQty.set(itemIdx, count);
+	} catch ( IndexOutOfBoundsException e ) { 
+		 //orderItemQty.add(itemIdx, count);
+		 orderItemQty.add(count);
+	}
+	
+	 
+	//System.out.println(count);
+	//System.out.println(orderItemQty);
+
 }
 
 private static void displayOrderItems() {
-	for(String orderItemName:orderNames)
+	ArrayList<String> distinctOrderNames = new ArrayList<String>();
+	
+	for (String orderItemName:orderNames) { 
+		  
+        // If this element is not present in distinctOrderNames 
+        // then add it 
+        if (!distinctOrderNames.contains(orderItemName)) { 
+
+        	distinctOrderNames.add(orderItemName); 
+        } 
+    } 
+
+	
+	for(String orderItemName:distinctOrderNames)
 	{
 	 Double itemPrice=	items.get(orderItemName);
+	 int itemIdx= distinctOrderNames.indexOf(orderItemName);
+	 int itemQty=	orderItemQty.get(itemIdx);
 	 //System.out.println(orderItemName+"\t\t\t\t"+ "$"+itemPrice);
 	 //String item = "$"+itemPrice;
 	 System.out.printf("%-20s%20.2f%s%n",orderItemName,itemPrice,"$");
+	 System.out.println("ItemQty "+itemQty);
 	}
 }
 /*private static void displayOrderItems1() {
@@ -99,6 +154,8 @@ private static void displayOrderItems() {
 	
 private static boolean isItemExists(String itemName) {
 	boolean isExists=false;
+	//System.out.println(items.containsKey(itemName));
+	
 	isExists=items.containsKey(itemName);
 	return isExists;
 }
